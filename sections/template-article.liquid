@@ -45,7 +45,8 @@
     }
 {% endschema %}
 
-<article class="py-8">
+<!-- article -->
+<article class="py-8" itemscope itemtype="http://schema.org/BlogPosting">
     {% for block in section.blocks %}
         {% case block.type %}
     
@@ -57,7 +58,7 @@
                         <!-- category -->
                         <a href="{{ blog.url }}" class="text-base uppercase text gray-500 hover:text-gray-900 font-bold">{{ blog.title }}</a>
                         
-                        <h1 class="my-2 text-4xl md:text-6xl font-medium">{{ article.title }}</h1>
+                        <h1 class="my-2 text-4xl md:text-6xl font-medium" itemprop="headline">{{ article.title }}</h1>
 
                     </div>
                 </div>
@@ -65,10 +66,10 @@
             <!-- author -->
             {% when 'article_author' %}
                 <div class="flex items-center justify-center">
-                    <div class="max-width-7xl text-center">
+                    <div class="max-width-7xl text-center" itemscope itemtype="http://schema.org/Person">
 
                         {% if section.settings.enable_author %}
-                            <small>{{ article.author }}</small>
+                            <small itemprop="author">{{ article.author }}</small>
                         {%  endif %}
                         
                     </div>
@@ -80,7 +81,7 @@
                     <div class="max-width-7xl text-center">
 
                         {% if section.settings.enable_published_date %}
-                            <time datetime="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}">{{ article.published_at | date: format: 'on_date' }}</time>
+                            <time datetime="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}" itemprop="datePublished dateCreated">{{ article.published_at | date: format: 'on_date' }}</time>
                         {% endif %}
                                 
                     </div>
@@ -88,7 +89,7 @@
             
             <!-- thumbnail -->
             {% when 'featured_image' %}
-                <div class="my-4 max-w-7xl bg-blue-100 rounded-lg mx-2 md:mx-auto overflow-hidden">
+                <div class="my-4 max-w-7xl bg-blue-100 rounded-lg mx-2 md:mx-auto overflow-hidden" itemprop="image">
 
                     {% if article.image != blank %}
                         <img class="w-full h-80 md:h-96 object-cover object-center" src="{{ article.image | img_url: 'large' }}" loading="lazy" alt="{{ article.image.alt }}" width="" height="" />
@@ -103,7 +104,7 @@
             <!-- article content -->
             {% when 'article_content' %}
                 <div class="flex items-center justify-center article-content my-8">
-                    <div class="max-w-5xl">
+                    <div class="max-w-5xl" itemprop="articleBody">
 
                         {{ article.content }}
                     
@@ -115,9 +116,40 @@
 </article>
 
 <!-- comments -->
-{% if blog.comments_enabled? %}
-    hello world
+{% if blog.comments_enabled? %} 
+    {% render 'comment-section' %}
 {% endif %}
+
+<!-- article schema -->
+<script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": {{ article.title | json }},
+        "articleBody": {{ article.content | strip_html | json }}, 
+
+        {% if article.excerpt != blank %}
+            "description": {{ article.excerpt | strip_html | json }},
+        {% endif %}
+
+        {% if article.image %}
+            "image": [
+                {{ article.image | img_url: "medium" | prepend: 'https:' | json }},
+            ],
+        {% endif %}
+
+        "datePublished": {{ article.published_at | date: format: "default" | json }}, 
+        "dateCreated": {{ article.created_at | date: format: "default" | json }},
+        "author": {
+            "@type": "Person",
+            "name": {{ article.author | json }}
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": {{ shop.name | json }}
+        }
+    }
+</script>
 
 
 
