@@ -117,7 +117,7 @@
 
 <!-- comments -->
 {% if blog.comments_enabled? %} 
-    {% render 'comment-section' %}
+    {% render 'comment-section', page: article %}
 {% endif %}
 
 <!-- article schema -->
