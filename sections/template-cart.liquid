@@ -1,0 +1,11 @@
+{% if cart.item_count > 0 %}
+
+    <!-- product cart -->
+    {% render 'product-cart' %}
+
+{% else %}
+
+    <!-- empty cart -->
+    {% render 'empty-cart' %}
+
+{% endif %}

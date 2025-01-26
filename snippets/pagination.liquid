@@ -3,10 +3,25 @@
     <nav role="navigation" class="flex justyf-center my-8">
 
         <!-- previous button -->
-        <a href="{{ pagination.previous.url }}">{{ pagination.previous.title }}</a>
+        {% if pagination.previous %}
+            <a class="border border-gray-600 text-gray-600 hover:bg-gray-600 hover:text-white px-8 py-3 mx-1 rounded-small font-medium transition" href="{{ pagination.previous.url }}">{{ pagination.previous.title }}</a>
+        {% endif %}
+
+        <!-- pages -->
+        {% for part in pagination.parts %}
+
+            {% if part.is_link %}
+                <a class="border border-gray-600 text-gray-600 hover:bg-gray-600 hover:text-white px-8 py-3 mx-1 rounded-small font-medium transition" href="{{ part.url }}">{{ part.title }}</a>
+            {% else %}
+                <span class="border border-gray-600 text-white bg-gray-600 px-8 py-3 mx-1 rounded-small font-medium">{{ part.title }}</span>
+            {% endif %}
+
+        {% endfor %}
         
         <!-- next button -->
-        <a href="{{ pagination.next.url }}">{{ pagination.next.title }}</a>
+        {% if pagination.next %}
+            <a class="border border-gray-600 text-gray-600 hover:bg-gray-600 hover:text-white px-8 py-3 mx-1 rounded-small font-medium transition" href="{{ pagination.next.url }}">{{ pagination.next.title }}</a>
+        {% endif %}
 
     </nav>
 
